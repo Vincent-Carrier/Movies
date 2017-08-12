@@ -3,6 +3,7 @@ package com.example.android.popularmovies.mainscreen;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,10 +55,10 @@ class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
 
 	@Override
 	public void onBindViewHolder(MovieAdapter.ViewHolder holder, int position) {
+		int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
 		Movie movie = movies.get(position);
 		Picasso.with(context)
 				.load(IMAGE_BASE_URL + XLARGE.width + movie.posterPath)
-				.placeholder(R.drawable.placeholder)
 				.into(holder.poster);
 		holder.poster.setContentDescription(movie.title);
 		holder.poster.setOnClickListener((view) ->

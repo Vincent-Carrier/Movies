@@ -7,6 +7,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.pojos.SortingMethod;
@@ -25,6 +26,9 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
 		movieGrid.setHasFixedSize(true);
+		movieGrid.setItemViewCacheSize(20);
+		movieGrid.setDrawingCacheEnabled(true);
+		movieGrid.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 		movieGrid.setLayoutManager(new GridLayoutManager(this, 2));
 		movieGrid.setAdapter(new MovieAdapter(this));
 
