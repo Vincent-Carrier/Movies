@@ -29,10 +29,7 @@ public class MainActivity extends AppCompatActivity {
 		movieGrid.setAdapter(new MovieAdapter(this));
 
 		viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-		viewModel.requestMovies().subscribe(theMovieDbResponse ->
-				// TODO: Make sure the app doesn't crash without a connection
-				((MovieAdapter) movieGrid.getAdapter()).setMovies(theMovieDbResponse.movies)
-		);
+		executeMoviesRequest();
 	}
 
 	@Override
@@ -53,12 +50,17 @@ public class MainActivity extends AppCompatActivity {
 				} else { viewModel.setSortingMethod(SortingMethod.popular); }
 				item.setTitle(getString(R.string.sorted_by) + " : "
 						+ viewModel.getSortingMethod().toString().replace('_', ' '));
-				viewModel.requestMovies().subscribe(theMovieDbResponse ->
-						((MovieAdapter) movieGrid.getAdapter()).setMovies(theMovieDbResponse.movies)
-				);
+				executeMoviesRequest();
 				break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void executeMoviesRequest() {
+		viewModel.requestMovies().subscribe(theMovieDbResponse ->
+				// TODO: Make sure the app doesn't crash when offline
+				((MovieAdapter) movieGrid.getAdapter()).setMovies(theMovieDbResponse.movies)
+		);
 	}
 
 	@Override
