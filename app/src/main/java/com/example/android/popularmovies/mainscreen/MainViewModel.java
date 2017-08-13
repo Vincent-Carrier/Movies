@@ -7,7 +7,7 @@ import android.arch.lifecycle.AndroidViewModel;
 import com.example.android.popularmovies.App;
 import com.example.android.popularmovies.TheMovieDbApi;
 import com.example.android.popularmovies.pojos.SortingMethod;
-import com.example.android.popularmovies.pojos.TheMovieDbResponse;
+import com.example.android.popularmovies.pojos.MoviesResponse;
 
 import javax.inject.Inject;
 
@@ -17,7 +17,8 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MainViewModel extends AndroidViewModel {
 
-	@Inject TheMovieDbApi theMovieDbApi;
+	@Inject
+	TheMovieDbApi theMovieDbApi;
 
 	private SortingMethod sortingMethod = SortingMethod.popular;
 
@@ -26,8 +27,8 @@ public class MainViewModel extends AndroidViewModel {
 		((App) app).getNetComponent().inject(this);
 	}
 
-	Observable<TheMovieDbResponse> requestMovies() {
-		return theMovieDbApi.fetchTopMoviesResponse(sortingMethod.toString())
+	Observable<MoviesResponse> requestMovies() {
+		return theMovieDbApi.fetchMoviesResponse(sortingMethod.toString())
 				.subscribeOn(Schedulers.newThread())
 				.observeOn(AndroidSchedulers.mainThread());
 	}

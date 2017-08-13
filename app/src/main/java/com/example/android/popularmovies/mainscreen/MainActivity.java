@@ -1,10 +1,12 @@
 package com.example.android.popularmovies.mainscreen;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,16 +25,19 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
+		if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+			movieGrid.setLayoutManager(new GridLayoutManager(this, 2));
+		} else { movieGrid.setLayoutManager(new GridLayoutManager(this, 4)); }
 		movieGrid.setHasFixedSize(true);
 		movieGrid.setItemViewCacheSize(20);
 		movieGrid.setDrawingCacheEnabled(true);
 		movieGrid.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
-		movieGrid.setLayoutManager(new GridLayoutManager(this, 2));
 		movieGrid.setAdapter(new MovieAdapter(this));
 
-		viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
 		executeMoviesRequest();
 	}
 
@@ -49,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.change_sorting_method:
+				// TODO: Fix to account for failed/interrupted requests. Cycle through sorting methods
 				if (viewModel.getSortingMethod() == SortingMethod.popular) {
 					viewModel.setSortingMethod(SortingMethod.top_rated);
 				} else { viewModel.setSortingMethod(SortingMethod.popular); }
@@ -61,9 +67,10 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void executeMoviesRequest() {
-		viewModel.requestMovies().subscribe(theMovieDbResponse ->
-				// TODO: Make sure the app doesn't crash when offline
-				((MovieAdapter) movieGrid.getAdapter()).setMovies(theMovieDbResponse.movies)
+		viewModel.requestMovies().subscribe(
+				theMovieDbResponse -> ((MovieAdapter) movieGrid.getAdapter()).setMovies(theMovieDbResponse.movies),
+				error -> Log.e("MainActivity", "Movies request failed")
+				// TODO: Implement a proper error
 		);
 	}
 
